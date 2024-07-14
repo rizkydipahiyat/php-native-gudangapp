@@ -193,16 +193,22 @@ class Barang extends Controller
       $getStock = $this->model('StockModel')->getStockById($data['id_stock']);
       $currentStock = $getStock['stock'];
 
+      if ($data['qty'] > $currentStock) {
+         Flasher::setFlash('Failed', 'Stock tersisa yang tersisa saat ini ' . $currentStock, 'danger');
+         header('Location: ' . BASEURL . '/barang/out');
+         exit;
+      }
+
       $newStock = $currentStock - $data['qty'];
 
       $updateStock = $this->model('StockModel')->updateStockById($data['id_stock'], $newStock);
       // Store to DB
       if ($updateStock && $this->model('BarangModel')->storeBarangOut($data) > 0) {
-         Flasher::setFlash('Success', 'Add barang in successfully', 'success');
+         Flasher::setFlash('Success', 'Add barang out successfully', 'success');
          header('Location: ' . BASEURL . '/barang/out');
          exit;
       } else {
-         Flasher::setFlash('Failed', 'Add barang masuk failed', 'danger');
+         Flasher::setFlash('Failed', 'Add barang keluar failed', 'danger');
          header('Location: ' . BASEURL . '/barang/out');
          exit;
       }
@@ -227,6 +233,13 @@ class Barang extends Controller
       $getStock = $this->model('StockModel')->getStockById($data['id_stock']);
       $currentStock = $getStock['stock'];
 
+      if ($data['qty'] > $currentStock) {
+         Flasher::setFlash('Failed', 'Stock tersisa yang tersisa saat ini ' . $currentStock, 'danger');
+         header('Location: ' . BASEURL . '/barang/out');
+         exit;
+      }
+
+
       // Check current qty di table barang_in
       $getQty = $this->model('BarangModel')->getBarangOutById($data['id']);
       $currentQty = $getQty['qty'];
@@ -249,6 +262,32 @@ class Barang extends Controller
          Flasher::setFlash('Failed', 'Update barang in failed', 'danger');
          header('Location: ' . BASEURL . '/barang/out');
          exit;
+      }
+   }
+
+   public function deleteBarangOut($id)
+   {
+      if (isset($_POST['_token']) && hash_equals($_SESSION['csrf_token'], $_POST['_token'])) {
+         $barangOut = $this->model('BarangModel')->getBarangOutById($id);
+         $qtyToDelete = $barangOut['qty'];
+         $id_stock = $barangOut['id_stock'];
+         // Ambil stok saat ini dari tabel stocks
+         $getStock = $this->model('StockModel')->getStockById($id_stock);
+         $currentStock = $getStock['stock'];
+         // Kurangi stok dengan qty yang dihapus
+         $newStock = $currentStock - $qtyToDelete;
+         // Update stok di tabel stocks
+         $updateStock = $this->model('StockModel')->updateStockById($id_stock, $newStock);
+
+         if ($updateStock && $this->model('BarangModel')->deleteBarangOut($id) > 0) {
+            Flasher::setFlash('Success', 'Delete barang keluar successfully', 'success');
+            header('Location: ' . BASEURL . '/barang/out');
+            exit;
+         } else {
+            Flasher::setFlash('Failed', 'Delete barang keluar failed', 'danger');
+            header('Location: ' . BASEURL . '/barang/out');
+            exit;
+         }
       }
    }
 }

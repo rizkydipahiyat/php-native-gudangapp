@@ -107,4 +107,14 @@ class BarangModel
 
       return $this->db->rowCount();
    }
+
+
+   public function deleteBarangOut($id)
+   {
+      $query = "DELETE FROM barang_out WHERE id=:id";
+      $this->db->query($query);
+      $this->db->bind('id', $id);
+      $this->db->execute();
+      $this->db->rowCount();
+   }
 }
