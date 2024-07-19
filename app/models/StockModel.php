@@ -9,6 +9,16 @@ class StockModel
       $this->db = new Database;
    }
 
+   // public function getRecords($id, $limit)
+   // {
+   //    $query = "SELECT * FROM stocks WHERE id < :id ORDER BY id ASC LIMIT :limit";
+   //    $this->db->query($query);
+   //    $this->db->bind('id', $id);
+   //    $this->db->bind('limit', $limit);
+   //    $this->db->execute();
+   //    return $this->db->resultSet();
+   // }
+
    public function getAllStock()
    {
       $query = "SELECT * FROM stocks";

@@ -18,6 +18,83 @@ $(function () {
 			{ data: "action" },
 		],
 	});
+	const barangOutChart = (chartType) => {
+		$.ajax({
+			url: `${baseUrl}/home/chartBarangOut`,
+			dataType: "json",
+			method: "get",
+			success: (data) => {
+				console.log(data);
+				let chartX = [];
+				let chartY = [];
+				data.map((data) => {
+					chartX.push(data.tanggal);
+					chartY.push(data.qty);
+				});
+				const chartData = {
+					labels: chartX,
+					datasets: [
+						{
+							label: "Barang Keluar",
+							data: chartY,
+							backgroundColor: [
+								"rgba(255, 99, 132, 0.2)",
+								"rgba(255, 159, 64, 0.2)",
+								"rgba(255, 205, 86, 0.2)",
+								"rgba(75, 192, 192, 0.2)",
+								"rgba(54, 162, 235, 0.2)",
+								"rgba(153, 102, 255, 0.2)",
+								"rgba(201, 203, 207, 0.2)",
+							],
+							borderColor: [
+								"rgb(255, 99, 132)",
+								"rgb(255, 159, 64)",
+								"rgb(255, 205, 86)",
+								"rgb(75, 192, 192)",
+								"rgb(54, 162, 235)",
+								"rgb(153, 102, 255)",
+								"rgb(201, 203, 207)",
+							],
+							borderWidth: 4,
+						},
+					],
+				};
+				const ctx = document.getElementById("chartBarangKeluar");
+				const config = {
+					type: chartType,
+					data: chartData,
+				};
+				switch (chartType) {
+					case "pie":
+						const pieColor = [
+							"salmon",
+							"red",
+							"skyblue",
+							"orange",
+							"gold",
+							"pink",
+						];
+						chartData.datasets[0].backgroundColor = pieColor;
+						chartData.datasets[0].borderColor = pieColor;
+						break;
+					case "bar":
+						chartData.datasets[0].backgroundColor = ["skyblue"];
+						chartData.datasets[0].borderColor = ["skyblue"];
+						break;
+					default:
+						config.options = {
+							scales: {
+								y: {
+									beginAtZero: true,
+								},
+							},
+						};
+				}
+				const chart = new Chart(ctx, config);
+			},
+		});
+	};
+	barangOutChart("bar");
 });
 
 function editFormBarangOut(url) {

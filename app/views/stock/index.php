@@ -10,7 +10,10 @@
             <h5>
                List Stocks
             </h5>
-            <a href="<?= BASEURL; ?>/stock/export" class="btn btn-sm btn-warning">Export Data</a>
+            <div>
+               <a href="<?= BASEURL; ?>/stock/export" class="btn btn-sm btn-warning">Export Data</a>
+               <a href="<?= BASEURL; ?>/stock/exportPDF" class="btn btn-sm btn-success">Export PDF</a>
+            </div>
          </div>
       </div>
       <div class="card-body data-tables">

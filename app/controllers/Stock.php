@@ -1,5 +1,7 @@
 <?php
 
+use Dompdf\Dompdf;
+
 class Stock extends Controller
 {
    public function index()
@@ -9,6 +11,31 @@ class Stock extends Controller
       $this->view('stock/index');
       $this->view('layouts/footer');
    }
+
+   // public function getPaginatedStocks()
+   // {
+   //    $stockModel = $this->model('StockModel');
+
+   //    // Get parameters from query string
+   //    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // If id is not provided, set it to a very large number
+   //    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 2; // Default limit is 10
+   //    var_dump($page);
+   //    // Validate input
+   //    // $page = filter_var($page, FILTER_VALIDATE_INT);
+   //    // $limit = filter_var($limit, FILTER_VALIDATE_INT);
+
+   //    // Get records for the current page
+   //    $stocks = $stockModel->getRecords($page, $limit);
+
+   //    // Prepare response
+   //    // $data = [
+   //    //    "data" => $stocks
+   //    // ];
+
+   //    // // Return JSON response
+   //    // header('Content-Type: application/json');
+   //    // echo json_encode($data);
+   // }
 
    public function getStocks()
    {
@@ -149,5 +176,24 @@ class Stock extends Controller
    public function export()
    {
       $this->view('stock/export');
+   }
+
+   public function exportPDF()
+   {
+      $stocks = $this->model('StockModel')->getAllStock();
+      $data = [
+         'title' => 'Stock List',
+         'stocks' => $stocks
+      ];
+      // Path ke file view
+      $viewPath = __DIR__ . '/../views/stock/export_pdf.php';
+
+      // Muat view dan dapatkan HTML sebagai string
+      $html = $this->loadView($viewPath, $data);
+      $pdf = new Dompdf();
+      $pdf->loadHtml($html);
+      $pdf->setPaper('A4', 'potrait');
+      $pdf->render();
+      $pdf->stream('stock.pdf' . date('Y-m-d-his') . '.pdf', array("Attachment" => false));
    }
 }

@@ -1,3 +1,3 @@
 <div class="container-fluid">
-   <h1>AKU HOME PAGE</h1>
+   <canvas id="chartBarangKeluar" width="500" height="200"></canvas>
 </div>
