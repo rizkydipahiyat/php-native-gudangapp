@@ -13,6 +13,7 @@
             <div>
                <a href="<?= BASEURL; ?>/stock/export" class="btn btn-sm btn-warning">Export Data</a>
                <a href="<?= BASEURL; ?>/stock/exportPDF" class="btn btn-sm btn-success">Export PDF</a>
+               <a href="<?= BASEURL; ?>/stock/exportExcel" class="btn btn-sm btn-primary">Export Excel</a>
             </div>
          </div>
       </div>

@@ -196,4 +196,16 @@ class Stock extends Controller
       $pdf->render();
       $pdf->stream('stock.pdf' . date('Y-m-d-his') . '.pdf', array("Attachment" => false));
    }
+
+   public function exportExcel()
+   {
+      $stocks = $this->model('StockModel')->getAllStock();
+      $data = [
+         'title' => 'Stock List',
+         'stocks' => $stocks
+      ];
+      $this->view('stock/export_excel', $data);
+      header('Content-Type: application/vnd.ms-excel');
+      header('Content-Disposition: attachment;filename="stock_data.xls"');
+   }
 }
