@@ -9,6 +9,14 @@ class BarangModel
       $this->db = new Database;
    }
 
+   public function getBarangInDate($tanggal)
+   {
+      $query = "SELECT qty FROM barang_in WHERE DATE(tanggal) = :tanggal";
+      $this->db->query($query);
+      $this->db->bind('tanggal', $tanggal);
+      return $this->db->resultSet();
+   }
+
    public function storeBarangIn($data)
    {
       $query = "INSERT INTO barang_in (id_stock, penerima, qty) VALUES (:id_stock, :penerima, :qty)";

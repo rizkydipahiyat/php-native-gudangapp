@@ -62,3 +62,7 @@ function deleteDataBarangIn(url) {
 			});
 	}
 }
+
+function editPeriode() {
+	$("#formModalBarangInDate").modal("show");
+}

@@ -9,6 +9,14 @@
          List Barang Masuk
       </div>
       <div class="card-body">
+         <div class="row mb-3">
+            <button onclick="editPeriode()" class="btn btn-sm btn-success" data-toggle="modal" data-target="#formModalBarangInDate">
+               <i class="fa fa-plus-circle"></i> Ubah Periode
+            </button>
+            <a href="<?= BASEURL; ?>/barang/exportPDF/<?= urlencode($data['tanggal_awal']); ?>/<?= urlencode($data['tanggal_akhir']); ?>" target="_blank" class="btn btn-sm btn-info  ml-2">
+               <i class="fa fa-file-pdf"></i> Export PDF
+            </a>
+         </div>
          <table id="itemBarangIn" class="table">
             <thead>
                <tr>
@@ -54,6 +62,32 @@
                <div class="form-group">
                   <label for="qty">Qty</label>
                   <input type="number" id="qty" name="qty" class="form-control">
+               </div>
+               <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="formModalBarangInDate" tabindex="-1" role="dialog" aria-labelledby="titleModal" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="titleModal">Edit Periode</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">×</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <form action="<?= BASEURL; ?>/barang/in" method="get">
+               <div class="form-group">
+                  <label for="tanggal_awal">Tanggal Awal</label>
+                  <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control" autofocus required value="<?= $data['tanggal_awal'] ?>">
+               </div>
+               <div class="form-group">
+                  <label for="tanggal_akhir">Tanggal Akhir</label>
+                  <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" value="<?= $data['tanggal_akhir'] ?>">
                </div>
                <button type="submit" class="btn btn-primary">Simpan</button>
             </form>

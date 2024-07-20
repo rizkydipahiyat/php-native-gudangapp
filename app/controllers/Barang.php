@@ -1,19 +1,85 @@
 <?php
 
+use Dompdf\Dompdf;
+
 class Barang extends Controller
 {
    public function in()
    {
       $stocks = $this->model('StockModel')->getAllStock();
+      $tanggalAwal = date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
+      $tanggalAkhir = date('Y-m-d');
+
+      if (isset($_GET['tanggal_awal']) && !empty($_GET['tanggal_awal']) && isset($_GET['tanggal_akhir']) && !empty($_GET['tanggal_akhir'])) {
+         $tanggalAwal = $_GET['tanggal_awal'];
+         $tanggalAkhir = $_GET['tanggal_akhir'];
+      }
 
       $data = [
          'url' => 'in',
          'title' => 'Barang Masuk',
-         'stocks' => $stocks
+         'stocks' => $stocks,
+         'tanggal_awal' => $tanggalAwal,
+         'tanggal_akhir' => $tanggalAkhir,
       ];
       $this->view('layouts/header', $data);
       $this->view('barang_in/index', $data);
       $this->view('layouts/footer');
+   }
+
+   public function getDataBarangIn($awal, $akhir)
+   {
+      $no = 1;
+      $data = [];
+
+      $tanggalAwal = strtotime($awal);
+      $tanggalAkhir = strtotime($akhir);
+
+      while ($tanggalAwal <= $tanggalAkhir) {
+         $tanggal = date('Y-m-d', $tanggalAwal);
+
+         $totalQty = 0;
+         $results = $this->model('BarangModel')->getBarangInDate($tanggal);
+
+         foreach ($results as $result) {
+            $totalQty += $result['qty'];
+         }
+
+         // Buat baris data untuk tanggal tersebut
+         $row = [];
+         $row['DT_RowIndex'] = $no++;
+         $row['tanggal'] = $tanggal;
+         $row['total_qty'] = $totalQty;
+
+         // Tambahkan baris ke array data
+         $data[] = $row;
+
+         // Tambahkan satu hari ke tanggalAwal
+         $tanggalAwal = strtotime("+1 day", $tanggalAwal);
+      }
+
+      return $data;
+   }
+
+   public function exportPDF($awal, $akhir)
+   {
+      $barang_in = $this->getDataBarangIn($awal, $akhir);
+      $data = [
+         'title' => 'Stock List',
+         'barang_in' => $barang_in,
+         'awal' => $awal,
+         'akhir' => $akhir
+      ];
+      // Path ke file view
+      $viewPath = __DIR__ . '/../views/barang_in/export_pdf.php';
+
+      // Muat view dan dapatkan HTML sebagai string
+      $html = $this->loadView($viewPath, $data);
+      $pdf = new Dompdf();
+      $pdf->loadHtml($html);
+      $pdf->setPaper('A4', 'potrait');
+      $pdf->render();
+      $pdf->stream('barang_in.pdf' . date('Y-m-d-his') . '.pdf', array("Attachment" => false));
    }
 
    public function getBarangIn()
@@ -41,6 +107,10 @@ class Barang extends Controller
       }
       header('Content-Type: application/json');
       echo json_encode(['data' => $data]);
+   }
+
+   public function filterDateBarangIn()
+   {
    }
 
    public function editBarangIn($id)
